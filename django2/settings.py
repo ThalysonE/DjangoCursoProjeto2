@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 from pathlib import Path
 import os
 
-from django.conf.global_settings import STATIC_ROOT
+from django.conf.global_settings import STATIC_ROOT, EMAIL_BACKEND
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -127,3 +127,15 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+#Configuracoes de email
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+
+"""
+    EMAIL_HOST = 'localhost'
+    EMAIL_HOST_USER = "no-reply@seudominio.com.br"
+    EMAIL_PORT = 587
+    EMAIL_USER_TSL = True
+    EMAIL_HOST_PASSWORD = 'sua-senha'
+"""
