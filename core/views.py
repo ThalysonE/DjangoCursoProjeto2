@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .forms import ContatoForms
+from .forms import ContatoForms, ProdutoModelForms
 from django.contrib import messages
 
 #importacoes para enviar email
@@ -55,5 +55,19 @@ def contato(request):
     return render(request, 'contato.html', context)
 
 def produto(request):
-    return render(request, 'produto.html')
+
+    if str(request.method) == 'POST':
+        form = ProdutoModelForms(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Produto salvo com sucesso!')
+            form = ProdutoModelForms()
+        else:
+            messages.error(request, 'Erro ao salvar o produto!')
+    else:
+        form = ProdutoModelForms()
+    context = {
+        'form': form
+    }
+    return render(request, 'produto.html', context)
 
