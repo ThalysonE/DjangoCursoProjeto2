@@ -5,6 +5,7 @@ from django.contrib import messages
 #importacoes para enviar email
 import smtplib
 from email.message import  EmailMessage
+
 def index(request):
     return render(request, 'index.html')
 
