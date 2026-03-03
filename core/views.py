@@ -1,13 +1,21 @@
 from django.shortcuts import render
 from .forms import ContatoForms, ProdutoModelForms
 from django.contrib import messages
+from .models import Produto
+from django.shortcuts import redirect
+
+
 
 #importacoes para enviar email
 import smtplib
 from email.message import  EmailMessage
 
 def index(request):
-    return render(request, 'index.html')
+
+    context = {
+        "context": Produto.objects.all()
+    }
+    return render(request, 'index.html', context)
 
 def contato(request):
     form = ContatoForms(request.POST or None)
@@ -33,18 +41,6 @@ def contato(request):
             with smtplib.SMTP_SSL("smtp.gmail.com", 465) as email:
                 email.login(remetente,senha)
                 email.send_message(msg)
-            """
-                nome = form.cleaned_data["nome"]
-                email = form.cleaned_data["email"]
-                assunto = form.cleaned_data["assunto"]
-                mensagem = form.cleaned_data["mensagem"]
-    
-                print("Mensage enviada")
-                print(f"Nome: {nome}")
-                print(f"Email: {email}")
-                print(f"Assunto: {assunto}")
-                print(f"Mensagem: {mensagem}")
-            """
             messages.success(request, "Email enviado com Sucesso!")
             form = ContatoForms()
         else:
@@ -55,19 +51,23 @@ def contato(request):
     return render(request, 'contato.html', context)
 
 def produto(request):
+    if str(request.user) == "AnonymousUser":
 
-    if str(request.method) == 'POST':
-        form = ProdutoModelForms(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Produto salvo com sucesso!')
-            form = ProdutoModelForms()
+        if str(request.method) == 'POST':
+            form = ProdutoModelForms(request.POST, request.FILES)
+            if form.is_valid():
+                form.save()
+                messages.success(request, 'Produto salvo com sucesso!')
+                form = ProdutoModelForms()
+            else:
+                messages.error(request, 'Erro ao salvar o produto!')
         else:
-            messages.error(request, 'Erro ao salvar o produto!')
+            form = ProdutoModelForms()
+        context = {
+            'form': form
+        }
+
+        return render(request, 'produto.html', context)
     else:
-        form = ProdutoModelForms()
-    context = {
-        'form': form
-    }
-    return render(request, 'produto.html', context)
+        return redirect('index')
 
